@@ -1050,8 +1050,8 @@ Ctrl + C (نسخ)
 | القناة | المعلومات |
 |--------|-----------|
 | 📧 **البريد** | abo.saleh.g@gmail.com |
-| 💻 **GitHub** | [Your Repository] |
-| 🌐 **الموقع** | [Your Website] |
+| 💻 **GitHub** | [[Your Repository](https://github.com/abosalehg-ui/arabic_converter)] |
+| 🌐 **الموقع** | [[Your Website](https://abosalehg-ui.github.io/arabic_converter/)] |
 | 📱 **الدعم** | abo.saleh.g@gmail.com |
 
 ### أوقات الرد
