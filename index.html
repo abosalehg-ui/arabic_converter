@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عاكس النصوص العربية</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* ===================================
+   🎨 نظام الألوان - نمط Claude
+   =================================== */
+
+:root {
+    /* الألوان الرئيسية */
+    --bg-primary: #F5F5F5;
+    --bg-secondary: #FFFFFF;
+    --bg-tertiary: #fafafa;
+    
+    /* ألوان النصوص */
+    --text-primary: #2C2D30;
+    --text-secondary: #6B6C7B;
+    --text-tertiary: #9CA3AF;
+    
+    /* اللون المميز */
+    --accent-primary: #CC785C;
+    --accent-hover: #B85C3F;
+    --accent-light: #ffdcdc;
+    
+    /* الحدود */
+    --border-light: #000000;
+    --border-medium: #D0D0D0;
+    
+    /* الظلال */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.1);
+    
+    /* الحالات */
+    --success-bg: #E8F5E9;
+    --success-text: #2E7D32;
+    --error-bg: #FFEBEE;
+    --error-text: #C62828;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* الحاوية الرئيسية */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-light);
+    overflow: hidden;
+}
+
+/* الترويسة */
+.header {
+    background: linear-gradient(to bottom, #d97757 0%, #47271c 100%);
+    padding: 32px;
+    text-align: center;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.header h1 {
+    font-size: 2rem;
+    margin-bottom: 8px;
+    color: #1A1915;
+    font-weight: 600;
+}
+
+.header p {
+    font-size: 1rem;
+    color: #bebebe;
+}
+
+/* المحتوى الرئيسي */
+.main-content {
+    padding: 32px;
+}
+
+/* التبويبات */
+.tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--border-light);
+    background: var(--bg-secondary);
+}
+
+.tab {
+    padding: 12px 24px;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--text-secondary);
+}
+
+.tab:hover {
+    color: var(--text-primary);
+    background: var(--bg-tertiary);
+}
+
+.tab.active {
+    color: var(--accent-primary);
+    border-bottom-color: var(--accent-primary);
+    background: transparent;
+}
+
+/* محتوى التبويبات */
+.tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { 
+        opacity: 0; 
+        transform: translateY(10px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+
+/* مجموعات الإدخال */
+.input-group {
+    margin-bottom: 24px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+}
+
+/* حقول النص */
+.text-input {
+    width: 100%;
+    min-height: 150px;
+    padding: 16px;
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    line-height: 1.6;
+    resize: vertical;
+    transition: all 0.2s ease;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.text-input:hover {
+    border-color: var(--border-medium);
+}
+
+.text-input:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px rgba(204, 120, 92, 0.1);
+}
+
+.text-input::placeholder {
+    color: var(--text-tertiary);
+}
+
+/* مجموعة الأزرار */
+.button-group {
+    display: flex;
+    gap: 12px;
+    margin: 24px 0;
+    flex-wrap: wrap;
+}
+
+/* الأزرار */
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.btn-primary {
+    background: var(--accent-primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(204, 120, 92, 0.25);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-light);
+}
+
+.btn-secondary:hover {
+    background: var(--bg-tertiary);
+    border-color: var(--border-medium);
+}
+
+.btn-success {
+    background: #E8F5E9;
+    color: #2E7D32;
+    border: 1px solid #A5D6A7;
+}
+
+.btn-success:hover {
+    background: #C8E6C9;
+}
+
+/* منطقة رفع الملفات */
+.file-upload {
+    border: 2px dashed var(--border-light);
+    border-radius: 12px;
+    padding: 48px;
+    text-align: center;
+    background: var(--bg-tertiary);
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.file-upload:hover {
+    background: var(--accent-light);
+    border-color: var(--accent-primary);
+}
+
+.file-upload.dragover {
+    background: var(--accent-light);
+    border-color: var(--accent-primary);
+    border-style: solid;
+    transform: scale(1.01);
+}
+
+.file-upload-text {
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+/* معلومات الملف */
+.file-info {
+    margin-top: 16px;
+    padding: 16px;
+    background: #E8F5E9;
+    border-radius: 8px;
+    border-left: 4px solid #4CAF50;
+    color: var(--text-primary);
+}
+
+/* الأمثلة */
+.examples {
+    background: var(--bg-tertiary);
+    border-radius: 12px;
+    padding: 24px;
+    margin-top: 24px;
+    border: 1px solid var(--border-light);
+}
+
+.examples h3 {
+    color: var(--text-primary);
+    margin-bottom: 16px;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.example-item {
+    margin-bottom: 12px;
+    padding: 16px;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    border-left: 3px solid var(--accent-primary);
+}
+
+.example-before {
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.example-after {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+/* رسائل الحالة */
+.status-message {
+    padding: 16px;
+    border-radius: 8px;
+    margin-top: 16px;
+    text-align: center;
+    font-weight: 500;
+    display: none;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.status-success {
+    background: var(--success-bg);
+    color: var(--success-text);
+    border: 1px solid #A5D6A7;
+}
+
+.status-success::before {
+    content: "✓ ";
+    font-weight: bold;
+}
+
+.status-error {
+    background: var(--error-bg);
+    color: var(--error-text);
+    border: 1px solid #EF9A9A;
+}
+
+.status-error::before {
+    content: "✕ ";
+    font-weight: bold;
+}
+
+/* التجاوب */
+@media (max-width: 768px) {
+    body {
+        padding: 12px;
+    }
+    
+    .container {
+        border-radius: 8px;
+    }
+    
+    .header {
+        padding: 24px 20px;
+    }
+    
+    .header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .main-content {
+        padding: 20px;
+    }
+    
+    .tabs {
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    .tab {
+        text-align: center;
+        border-bottom: 1px solid var(--border-light);
+    }
+    
+    .tab.active {
+        border-bottom-color: var(--accent-primary);
+        border-left: 3px solid var(--accent-primary);
+    }
+    
+    .button-group {
+        flex-direction: column;
+    }
+    
+    .btn {
+        width: 100%;
+    }
+    
+    .file-upload {
+        padding: 32px 20px;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>عاكس النصوص العربية</h1>
+            <p>أداة متقدمة لعكس النصوص العربية</p>
+        </div>
+
+        <div class="main-content">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('text')">تحويل النص</button>
+                <button class="tab" onclick="switchTab('file')">معالجة الملفات</button>
+                <button class="tab" onclick="switchTab('color')">نصوص ملونة</button>
+                <button class="tab" onclick="switchTab('quoted')">نصوص محددة</button>
+            </div>
+
+            <!-- تحويل النص -->
+            <div id="text-tab" class="tab-content active">
+                <div class="input-group">
+                    <label for="input-text">النص المراد تحويله:</label>
+                    <textarea id="input-text" class="text-input" placeholder="اكتب النص العربي هنا..."></textarea>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="convertText()">تحويل النص</button>
+                    <button class="btn btn-secondary" onclick="clearText()">مسح الكل</button>
+                    <button class="btn btn-success" onclick="copyResult()">نسخ النتيجة</button>
+                </div>
+
+                <div class="input-group">
+                    <label for="output-text">النص المحول:</label>
+                    <textarea id="output-text" class="text-input" readonly placeholder="النتيجة ستظهر هنا..."></textarea>
+                </div>
+
+                <div class="examples">
+                    <h3>أمثلة التحويل:</h3>
+                    <div class="example-item">
+                        <div class="example-before">الأصل: مرحبا بكم</div>
+                        <div class="example-after">المحول: مكب احبرم</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- معالجة الملفات -->
+            <div id="file-tab" class="tab-content">
+                <div class="file-upload" id="file-drop-zone">
+                    <input type="file" id="file-input" accept=".txt" onchange="handleFileSelect(this.files)">
+                    <div class="file-upload-text">اسحب الملف هنا أو انقر للاختيار</div>
+                    <p>يدعم ملفات .txt فقط</p>
+                </div>
+
+                <div id="file-info" class="file-info" style="display: none;">
+                    <strong>تم اختيار الملف:</strong> <span id="file-name"></span>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="processFile()" id="process-btn" disabled>معالجة الملف</button>
+                    <button class="btn btn-success" onclick="downloadResult()" id="download-btn" disabled>تحميل النتيجة</button>
+                </div>
+
+                <div class="input-group">
+                    <label for="file-output">محتوى الملف المعالج:</label>
+                    <textarea id="file-output" class="text-input" readonly placeholder="محتوى الملف المعالج سيظهر هنا..."></textarea>
+                </div>
+            </div>
+
+            <!-- نصوص ملونة -->
+            <div id="color-tab" class="tab-content">
+                <div class="input-group">
+                    <label for="color-input">النص مع العلامات الملونة:</label>
+                    <textarea id="color-input" class="text-input" placeholder='مثال: <clr:255,212,255>النص العربي</clr:255,212,255>'></textarea>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="processColorText()">معالجة النص الملون</button>
+                    <button class="btn btn-secondary" onclick="clearColorText()">مسح الكل</button>
+                    <button class="btn btn-success" onclick="copyColorResult()">نسخ النتيجة</button>
+                </div>
+
+                <div class="input-group">
+                    <label for="color-output">النتيجة:</label>
+                    <textarea id="color-output" class="text-input" readonly placeholder="النص المعالج سيظهر هنا..."></textarea>
+                </div>
+
+                <div class="examples">
+                    <h3>أمثلة النصوص الملونة:</h3>
+                    <div class="example-item">
+                        <div class="example-before">الأصل: &lt;clr:255,212,255&gt;مرحبا&lt;/clr&gt;</div>
+                        <div class="example-after">المحول: &lt;clr:255,212,255&gt;احبرم&lt;/clr&gt;</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- نصوص محددة -->
+            <div id="quoted-tab" class="tab-content">
+                <div class="examples" style="margin-top: 0; margin-bottom: 25px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                    <h3 style="color: white; margin-bottom: 15px;">تعليمات الاستخدام:</h3>
+                    <div class="example-item" style="background: rgba(255,255,255,0.1); border-left: 4px solid #fff;">
+                        <div style="margin-bottom: 8px;">يعالج هذا التبويب النصوص العربية الموجودة بين علامات التنصيص</div>
+                        <div style="font-weight: bold; color: #ffecd2;">الأنماط المدعومة:</div>
+                        <div style="font-size: 0.9rem; margin-top: 5px;">• "النص العربي"</div>
+                        <div style="font-size: 0.9rem;">• "أي نص" "النص العربي"</div>
+                        <div style="font-size: 0.9rem;">• "ep_02.test" "النص العربي"</div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="quoted-input">النص مع علامات التنصيص:</label>
+                    <textarea id="quoted-input" class="text-input" placeholder='أمثلة: "انطلق يا حمد!" أو "ep_02.test" "النص العربي"'></textarea>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="processQuotedText()">معالجة النص</button>
+                    <button class="btn btn-secondary" onclick="insertQuotedExample()">إدراج مثال</button>
+                    <button class="btn btn-secondary" onclick="clearQuotedText()">مسح الكل</button>
+                    <button class="btn btn-success" onclick="copyQuotedResult()">نسخ النتيجة</button>
+                </div>
+
+                <div class="input-group">
+                    <label for="quoted-output">النتيجة:</label>
+                    <textarea id="quoted-output" class="text-input" readonly placeholder="النص المعالج سيظهر هنا..."></textarea>
+                </div>
+
+            <div id="status-message" class="status-message"></div>
+
+        <div class="footer">
+            <p>تطوير: عبدالكريم العبود | <a href="mailto:abo.saleh.g@gmail.com">abo.saleh.g@gmail.com</a></p>
+            <p>© 2024 ImageMetrics Tool - All Rights Reserved</p>
+        </div>
+    </div>
+
+    <script>
+        // Arabic Converter Class (JavaScript version)
+        class ArabicConverter {
+            constructor() {
+                this.arabicForms = {
+                    'ا': {'isolated': '\u0627', 'final': '\uFE8E'},
+                    'ب': {'isolated': '\u0628', 'final': '\uFE90', 'initial': '\uFE91', 'medial': '\uFE92'},
+                    'ت': {'isolated': '\u062A', 'final': '\uFE96', 'initial': '\uFE97', 'medial': '\uFE98'},
+                    'ث': {'isolated': '\u062B', 'final': '\uFE9A', 'initial': '\uFE9B', 'medial': '\uFE9C'},
+                    'ج': {'isolated': '\u062C', 'final': '\uFE9E', 'initial': '\uFE9F', 'medial': '\uFEA0'},
+                    'ح': {'isolated': '\u062D', 'final': '\uFEA2', 'initial': '\uFEA3', 'medial': '\uFEA4'},
+                    'خ': {'isolated': '\u062E', 'final': '\uFEA6', 'initial': '\uFEA7', 'medial': '\uFEA8'},
+                    'د': {'isolated': '\u062F', 'final': '\uFEAA'},
+                    'ذ': {'isolated': '\u0630', 'final': '\uFEAC'},
+                    'ر': {'isolated': '\u0631', 'final': '\uFEAE'},
+                    'ز': {'isolated': '\u0632', 'final': '\uFEB0'},
+                    'س': {'isolated': '\u0633', 'final': '\uFEB2', 'initial': '\uFEB3', 'medial': '\uFEB4'},
+                    'ش': {'isolated': '\u0634', 'final': '\uFEB6', 'initial': '\uFEB7', 'medial': '\uFEB8'},
+                    'ص': {'isolated': '\u0635', 'final': '\uFEBA', 'initial': '\uFEBB', 'medial': '\uFEBC'},
+                    'ض': {'isolated': '\u0636', 'final': '\uFEBE', 'initial': '\uFEBF', 'medial': '\uFEC0'},
+                    'ط': {'isolated': '\u0637', 'final': '\uFEC2', 'initial': '\uFEC3', 'medial': '\uFEC4'},
+                    'ظ': {'isolated': '\u0638', 'final': '\uFEC6', 'initial': '\uFEC7', 'medial': '\uFEC8'},
+                    'ع': {'isolated': '\u0639', 'final': '\uFECA', 'initial': '\uFECB', 'medial': '\uFECC'},
+                    'غ': {'isolated': '\u063A', 'final': '\uFECE', 'initial': '\uFECF', 'medial': '\uFED0'},
+                    'ف': {'isolated': '\u0641', 'final': '\uFED2', 'initial': '\uFED3', 'medial': '\uFED4'},
+                    'ق': {'isolated': '\u0642', 'final': '\uFED6', 'initial': '\uFED7', 'medial': '\uFED8'},
+                    'ك': {'isolated': '\u0643', 'final': '\uFEDA', 'initial': '\uFEDB', 'medial': '\uFEDC'},
+                    'ل': {'isolated': '\u0644', 'final': '\uFEDE', 'initial': '\uFEDF', 'medial': '\uFEE0'},
+                    'م': {'isolated': '\u0645', 'final': '\uFEE2', 'initial': '\uFEE3', 'medial': '\uFEE4'},
+                    'ن': {'isolated': '\u0646', 'final': '\uFEE6', 'initial': '\uFEE7', 'medial': '\uFEE8'},
+                    'ه': {'isolated': '\u0647', 'final': '\uFEEA', 'initial': '\uFEEB', 'medial': '\uFEEC'},
+                    'و': {'isolated': '\u0648', 'final': '\uFEEE'},
+                    'ي': {'isolated': '\u064A', 'final': '\uFEF2', 'initial': '\uFEF3', 'medial': '\uFEF4'},
+                    'ى': {'isolated': '\u0649', 'final': '\uFEF0'},
+                    'ة': {'isolated': '\u0629', 'final': '\uFE94'}
+                };
+                
+                this.nonConnecting = new Set(['ا', 'د', 'ذ', 'ر', 'ز', 'و']);
+            }
+
+            isArabic(char) {
+                const code = char.charCodeAt(0);
+                return code >= 0x0600 && code <= 0x06FF;
+            }
+
+            canConnectAfter(char) {
+                return this.arabicForms[char] && !this.nonConnecting.has(char);
+            }
+
+            canConnectBefore(char) {
+                return this.arabicForms[char] !== undefined;
+            }
+
+            getForm(char, position) {
+                if (!this.arabicForms[char]) return char;
+                const forms = this.arabicForms[char];
+                return forms[position] || char;
+            }
+
+            shapeText(text) {
+                if (!text) return text;
+                
+                const result = [];
+                const chars = Array.from(text);
+                
+                for (let i = 0; i < chars.length; i++) {
+                    const char = chars[i];
+                    
+                    if (!this.isArabic(char)) {
+                        result.push(char);
+                        continue;
+                    }
+                    
+                    const connectsBefore = i > 0 && 
+                        this.canConnectAfter(chars[i-1]) && 
+                        this.canConnectBefore(char);
+                    
+                    const connectsAfter = i < chars.length - 1 && 
+                        this.canConnectBefore(chars[i+1]) && 
+                        this.canConnectAfter(char);
+                    
+                    let position;
+                    if (connectsBefore && connectsAfter) {
+                        position = 'medial';
+                    } else if (connectsBefore) {
+                        position = 'final';
+                    } else if (connectsAfter) {
+                        position = 'initial';
+                    } else {
+                        position = 'isolated';
+                    }
+                    
+                    const shaped = this.getForm(char, position);
+                    result.push(shaped);
+                }
+                
+                return result.join('');
+            }
+
+            reverseText(text) {
+                const lines = text.split('\n');
+                const resultLines = [];
+                
+                for (const line of lines) {
+                    const parts = [];
+                    let current = "";
+                    let isArabic = false;
+                    
+                    for (const char of line) {
+                        const charIsArabic = this.isArabic(char);
+                        
+                        if (charIsArabic !== isArabic && current) {
+                            parts.push([current, isArabic]);
+                            current = char;
+                            isArabic = charIsArabic;
+                        } else {
+                            current += char;
+                            isArabic = charIsArabic;
+                        }
+                    }
+                    
+                    if (current) {
+                        parts.push([current, isArabic]);
+                    }
+                    
+                    const processed = [];
+                    for (const [part, isAr] of parts) {
+                        if (isAr) {
+                            const shaped = this.shapeText(part);
+                            const reversed = shaped.split('').reverse().join('');
+                            processed.push(reversed);
+                        } else {
+                            processed.push(part);
+                        }
+                    }
+                    
+                    if (parts.some(([_, isAr]) => isAr)) {
+                        processed.reverse();
+                    }
+                    
+                    resultLines.push(processed.join(''));
+                }
+                
+                return resultLines.join('\n');
+            }
+
+            convertText(text) {
+                return this.reverseText(text);
+            }
+
+            hasArabic(text) {
+                return Array.from(text).some(char => this.isArabic(char));
+            }
+
+            processColorTags(text) {
+                const pattern = /<clr:([^>]+)>([^<\n"]*)/g;
+                
+                return text.replace(pattern, (match, color, content) => {
+                    if (content && this.hasArabic(content)) {
+                        const converted = this.convertText(content);
+                        return `<clr:${color}>${converted}`;
+                    }
+                    return match;
+                });
+            }
+
+            processQuotedText(text) {
+                // البحث عن أي نمط يحتوي على نص بين علامتي تنصيص
+                const patterns = [
+                    // النمط المحدد: "شيء" "نص عربي"
+                    /"([^"]*)" "([^"]+)"/g,
+                    // النمط الأساسي: "نص عربي" (فقط إذا لم يكن جزءاً من النمط السابق)
+                    /"([^"]*[\u0600-\u06FF][^"]*?)"/g
+                ];
+                
+                let result = text;
+                
+                // تطبيق النمط الأول (النمط المحدد مع نصين)
+                result = result.replace(/"([^"]*)" "([^"]+)"/g, (match, prefix, content) => {
+                    if (content && this.hasArabic(content)) {
+                        // معالجة النص العربي مع الحفاظ على التشكيل والقلب الصحيح
+                        const converted = this.reverseText(content);
+                        return `"${prefix}" "${converted}"`;
+                    }
+                    return match;
+                });
+                
+                // تطبيق النمط الثاني على ما تبقى (نص واحد فقط)
+                result = result.replace(/"([^"]*[\u0600-\u06FF][^"]*?)"/g, (match, content) => {
+                    // التأكد من عدم معالجة النصوص التي تم معالجتها بالفعل
+                    const beforeMatch = result.substring(0, result.indexOf(match));
+                    const afterMatch = result.substring(result.indexOf(match) + match.length);
+                    
+                    // تجاهل إذا كان هناك نمط " " قبل أو بعد هذا النص
+                    if (beforeMatch.endsWith('" ') || afterMatch.startsWith(' "')) {
+                        return match;
+                    }
+                    
+                    if (content && this.hasArabic(content)) {
+                        const converted = this.reverseText(content);
+                        return `"${converted}"`;
+                    }
+                    return match;
+                });
+                
+                return result;
+            }
+        }
+
+        // Global converter instance
+        const converter = new ArabicConverter();
+        let selectedFile = null;
+        let processedContent = null;
+
+        // Tab switching
+        function switchTab(tabName) {
+            // Remove active class from all tabs and contents
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Add active class to selected tab and content
+            event.target.classList.add('active');
+            const tabContent = document.getElementById(tabName + '-tab');
+            if (tabContent) {
+                tabContent.classList.add('active');
+            }
+        }
+
+        // Text conversion functions
+        function convertText() {
+            const inputText = document.getElementById('input-text').value;
+            if (!inputText.trim()) {
+                showStatus('يرجى إدخال نص للتحويل', 'error');
+                return;
+            }
+            
+            const result = converter.convertText(inputText);
+            document.getElementById('output-text').value = result;
+            showStatus('تم تحويل النص بنجاح!', 'success');
+        }
+
+        function clearText() {
+            document.getElementById('input-text').value = '';
+            document.getElementById('output-text').value = '';
+        }
+
+        function copyResult() {
+            const output = document.getElementById('output-text');
+            if (!output.value.trim()) {
+                showStatus('لا يوجد نص للنسخ', 'error');
+                return;
+            }
+            
+            output.select();
+            document.execCommand('copy');
+            showStatus('تم نسخ النص بنجاح!', 'success');
+        }
+
+        // File handling functions
+        function setupFileUpload() {
+            const dropZone = document.getElementById('file-drop-zone');
+            const fileInput = document.getElementById('file-input');
+            
+            dropZone.addEventListener('click', () => fileInput.click());
+            
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('dragover');
+            });
+            
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.classList.remove('dragover');
+            });
+            
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+                handleFileSelect(e.dataTransfer.files);
+            });
+        }
+
+        function handleFileSelect(files) {
+            if (files.length === 0) return;
+            
+            const file = files[0];
+            if (!file.name.endsWith('.txt')) {
+                showStatus('يرجى اختيار ملف نصي (.txt)', 'error');
+                return;
+            }
+            
+            selectedFile = file;
+            document.getElementById('file-name').textContent = file.name;
+            document.getElementById('file-info').style.display = 'block';
+            document.getElementById('process-btn').disabled = false;
+            
+            showStatus('تم اختيار الملف بنجاح', 'success');
+        }
+
+        function processFile() {
+            if (!selectedFile) {
+                showStatus('يرجى اختيار ملف أولاً', 'error');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const content = e.target.result;
+                
+                let processed;
+                if (content.includes('<clr:')) {
+                    processed = converter.processColorTags(content);
+                } else {
+                    processed = converter.convertText(content);
+                }
+                
+                processedContent = processed;
+                document.getElementById('file-output').value = processed;
+                document.getElementById('download-btn').disabled = false;
+                
+                showStatus('تم معالجة الملف بنجاح!', 'success');
+            };
+            
+            reader.onerror = function() {
+                showStatus('حدث خطأ في قراءة الملف', 'error');
+            };
+            
+            reader.readAsText(selectedFile, 'utf-8');
+        }
+
+        function downloadResult() {
+            if (!processedContent) {
+                showStatus('لا يوجد محتوى للتحميل', 'error');
+                return;
+            }
+            
+            const blob = new Blob([processedContent], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            
+            const originalName = selectedFile.name.replace('.txt', '');
+            a.href = url;
+            a.download = `${originalName}_converted.txt`;
+            a.click();
+            
+            URL.revokeObjectURL(url);
+            showStatus('تم تحميل الملف بنجاح!', 'success');
+        }
+
+        // Color text functions
+        function processColorText() {
+            const inputText = document.getElementById('color-input').value;
+            if (!inputText.trim()) {
+                showStatus('يرجى إدخال نص للمعالجة', 'error');
+                return;
+            }
+            
+            const result = converter.processColorTags(inputText);
+            document.getElementById('color-output').value = result;
+            showStatus('تم معالجة النص الملون بنجاح!', 'success');
+        }
+
+        function clearColorText() {
+            document.getElementById('color-input').value = '';
+            document.getElementById('color-output').value = '';
+        }
+
+        function copyColorResult() {
+            const output = document.getElementById('color-output');
+            if (!output.value.trim()) {
+                showStatus('لا يوجد نص للنسخ', 'error');
+                return;
+            }
+            
+            output.select();
+            document.execCommand('copy');
+            showStatus('تم نسخ النص بنجاح!', 'success');
+        }
+
+        // Quoted text functions
+        function processQuotedText() {
+            const inputText = document.getElementById('quoted-input').value;
+            if (!inputText.trim()) {
+                showStatus('يرجى إدخال نص للمعالجة', 'error');
+                return;
+            }
+            
+            const result = converter.processQuotedText(inputText);
+            document.getElementById('quoted-output').value = result;
+            showStatus('تم معالجة النص المحدد بنجاح!', 'success');
+        }
+
+        function clearQuotedText() {
+            document.getElementById('quoted-input').value = '';
+            document.getElementById('quoted-output').value = '';
+        }
+
+        function copyQuotedResult() {
+            const output = document.getElementById('quoted-output');
+            if (!output.value.trim()) {
+                showStatus('لا يوجد نص للنسخ', 'error');
+                return;
+            }
+            
+            output.select();
+            document.execCommand('copy');
+            showStatus('تم نسخ النص بنجاح!', 'success');
+        }
+
+        function insertQuotedExample() {
+            const exampleText = '"ep_02.reb_basesaved05" "انطلق يا حمد!"\n"ep_02.reb_basesaved06" "ها هو قادم! ها هو حمد قادم!"';
+            document.getElementById('quoted-input').value = exampleText;
+            showStatus('تم إدراج المثال بنجاح!', 'success');
+        }
+
+        // Status message function
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status-message');
+            statusDiv.textContent = message;
+            statusDiv.className = `status-message status-${type}`;
+            statusDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                statusDiv.style.display = 'none';
+            }, 3000);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            setupFileUpload();
+        });
+    </script>
+</body>
+</html>
