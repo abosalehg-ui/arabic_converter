@@ -6,8 +6,8 @@
 
 أداة متقدمة لعكس وتحويل النصوص العربية مع دعم التشكيل التلقائي
 
-[![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
-[![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+[![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
+[![Vite](https://img.shields.io/badge/Vite-6-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev)
 [![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS)
 [![GitHub Pages](https://img.shields.io/badge/GitHub-Pages-222222?style=for-the-badge&logo=github)](https://abosalehg-ui.github.io/arabic_converter/)
 
@@ -41,6 +41,11 @@
 | 📁 **معالجة الملفات** | دعم كامل لملفات TXT مع السحب والإفلات |
 | 🎨 **نصوص ملونة** | معالجة العلامات الملونة `<clr:RGB>` |
 | 📋 **نصوص محددة** | معالجة النصوص بين علامات التنصيص |
+| 🌙 **وضع ليلي/نهاري** | تبديل يدوي مع احترام إعدادات النظام |
+| 🌐 **ثنائي اللغة** | واجهة بالعربية والإنجليزية مع RTL/LTR صحيح |
+| ⌨️ **اختصارات لوحة المفاتيح** | `Ctrl+Enter` للتحويل · `Ctrl+K` للوحة الأوامر |
+| 📜 **سجل التحويلات** | حفظ آخر 50 تحويل محليًا مع استعادة بنقرة |
+| 📊 **إحصائيات النص الحيّة** | عدّاد للأحرف والكلمات والأسطر |
 | 💻 **بدون تثبيت** | يعمل مباشرة في المتصفح |
 | 🔒 **خصوصية تامة** | المعالجة تتم محلياً - لا إرسال للبيانات |
 
@@ -94,13 +99,23 @@
 https://abosalehg-ui.github.io/arabic_converter/
 ```
 
-### محلياً
+### محلياً (تطوير)
 ```bash
 # استنساخ المستودع
 git clone https://github.com/abosalehg-ui/arabic_converter.git
+cd arabic_converter
 
-# فتح في المتصفح
-open index.html
+# تثبيت الاعتماديات
+npm install
+
+# تشغيل خادم التطوير
+npm run dev
+
+# بناء نسخة الإنتاج
+npm run build
+
+# معاينة نسخة الإنتاج محلياً
+npm run preview
 ```
 
 ---
@@ -128,8 +143,30 @@ open index.html
 
 ```
 arabic_converter/
-├── index.html          # التطبيق الرئيسي
-└── README.md           # التوثيق
+├── index.html                       # قالب Vite (نقطة الدخول)
+├── vite.config.js                   # base path للنشر على GitHub Pages
+├── package.json
+├── public/
+│   └── favicon.svg
+├── src/
+│   ├── main.jsx                     # نقطة دخول React
+│   ├── App.jsx                      # تركيب الجذر
+│   ├── index.css                    # متغيرات التصميم (light + dark)
+│   ├── lib/
+│   │   ├── arabicConverter.js       # منطق التشكيل والعكس
+│   │   └── storage.js               # غلاف آمن حول localStorage
+│   ├── theme/ThemeProvider.jsx
+│   ├── i18n/                        # I18nProvider + ar.json + en.json
+│   ├── hooks/                       # useHotkeys, useTextStats
+│   ├── feedback/ToastProvider.jsx
+│   ├── history/HistoryProvider.jsx
+│   └── components/
+│       ├── layout/                  # Header, TabBar, Footer
+│       ├── controls/                # TextArea, TextStats, ThemeToggle, ...
+│       ├── tabs/                    # التبويبات الأربعة
+│       ├── palette/CommandPalette.jsx
+│       └── history/HistoryDrawer.jsx
+└── .github/workflows/deploy.yml     # نشر تلقائي على GitHub Pages
 ```
 
 ---
@@ -138,11 +175,25 @@ arabic_converter/
 
 | التقنية | الاستخدام |
 |---------|-----------|
-| **HTML5** | هيكلة الصفحة |
-| **CSS3** | التصميم والتنسيق |
-| **JavaScript** | خوارزمية التحويل والتفاعل |
+| **React 18** | نظام المكونات وإدارة الحالة |
+| **Vite 6** | البناء والتطوير |
+| **lucide-react** | الأيقونات |
+| **CSS Variables** | متغيرات التصميم ودعم الثيمات |
 | **FileReader API** | معالجة الملفات |
-| **Unicode** | تشكيل الحروف العربية |
+| **localStorage** | حفظ الثيم واللغة وسجل التحويلات |
+| **Unicode Presentation Forms** | تشكيل الحروف العربية |
+
+---
+
+## ⌨️ اختصارات لوحة المفاتيح
+
+| الاختصار | الإجراء |
+|----------|---------|
+| `Ctrl + Enter` | تشغيل تحويل التبويب الحالي |
+| `Ctrl + K` | فتح لوحة الأوامر |
+| `↑` / `↓` | التنقل بين الأوامر |
+| `Enter` | تنفيذ الأمر المحدد |
+| `Esc` | إغلاق لوحة الأوامر أو السجل |
 
 ---
 
@@ -153,7 +204,7 @@ arabic_converter/
 | 📝 الحروف المدعومة | 28+ حرف عربي |
 | 🎨 الأشكال | 4 أشكال لكل حرف |
 | 📁 أنواع الملفات | TXT |
-| 💾 حجم التطبيق | < 50 KB |
+| 💾 حجم الباندل (gzipped) | ~62 KB |
 | ⚡ سرعة المعالجة | < 100ms |
 
 ---
