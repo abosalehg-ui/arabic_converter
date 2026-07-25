@@ -1,0 +1,111 @@
+/* ===================================
+   Design tokens
+   Colour pairs are chosen to meet WCAG AA (4.5:1) for body text against the
+   surfaces they are actually used on. Verify with `npm run check:contrast`
+   before changing any of them.
+=================================== */
+
+:root,
+:root[data-theme='light'] {
+  --bg-base: #f7f5f3;
+  --bg-surface: #ffffff;
+  --bg-surface-elevated: #ffffff;
+  --bg-muted: #f3efed;
+  --bg-overlay: rgba(20, 14, 10, 0.45);
+
+  --text-primary: #1f1c1a;
+  --text-secondary: #5b554f;
+  /* 5.76:1 on --bg-surface, 5.04:1 on --bg-muted */
+  --text-tertiary: #6b655e;
+  --text-on-accent: #ffffff;
+
+  /* 5.42:1 on --bg-surface, 4.74:1 on --bg-muted, 5.42:1 for white-on-accent */
+  --accent-primary: #a1553a;
+  /* 7.13:1 for white-on-accent */
+  --accent-hover: #8a442d;
+  --accent-soft: #fbe9e1;
+  /* --accent-primary reaches 4.60:1 on --accent-soft */
+  --accent-ring: rgba(161, 85, 58, 0.22);
+
+  --border-subtle: #e8e2dd;
+  --border-medium: #d6cec7;
+  --border-strong: #b8aea6;
+  /* Boundary of an interactive control: WCAG 1.4.11 wants 3:1 (3.51:1 here) */
+  --border-interactive: #857e76;
+
+  --shadow-sm: 0 1px 2px rgba(20, 14, 10, 0.04);
+  --shadow-md: 0 4px 16px rgba(20, 14, 10, 0.06);
+  --shadow-lg: 0 12px 40px rgba(20, 14, 10, 0.1);
+
+  --success-bg: #e8f5e9;
+  --success-text: #256a29;
+  --success-border: #a5d6a7;
+  --error-bg: #fdecea;
+  --error-text: #b3261e;
+  --error-border: #f1b4b1;
+
+  --header-grad-start: #d97757;
+  --header-grad-end: #47271c;
+  --header-title: #fff8f3;
+  --header-subtitle: #fbe6da;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --bg-base: #14110f;
+  --bg-surface: #1c1816;
+  --bg-surface-elevated: #221d1a;
+  --bg-muted: #1a1615;
+  --bg-overlay: rgba(0, 0, 0, 0.6);
+
+  --text-primary: #f2ede9;
+  --text-secondary: #b8aea6;
+  /* 5.22:1 on --bg-surface, 5.32:1 on --bg-muted */
+  --text-tertiary: #948a82;
+  --text-on-accent: #1c1816;
+
+  /* 6.74:1 on --bg-surface, 5.69:1 on --accent-soft */
+  --accent-primary: #e08a6e;
+  --accent-hover: #efa38a;
+  --accent-soft: #3a211a;
+  --accent-ring: rgba(224, 138, 110, 0.28);
+
+  --border-subtle: #2a2421;
+  --border-medium: #3a322e;
+  --border-strong: #574c45;
+  /* 3.35:1 on --bg-muted */
+  --border-interactive: #736961;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.6);
+
+  --success-bg: #1e3a24;
+  --success-text: #8cd49a;
+  --success-border: #2f5839;
+  --error-bg: #3a1e1e;
+  --error-text: #f2a0a0;
+  --error-border: #5a2f2f;
+
+  --header-grad-start: #8e4a33;
+  --header-grad-end: #2a1610;
+  --header-title: #fdf5ef;
+  --header-subtitle: #e5c5b3;
+
+  color-scheme: dark;
+}

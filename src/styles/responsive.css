@@ -1,0 +1,58 @@
+/* ===================================
+   Responsive
+=================================== */
+
+@media (max-width: 768px) {
+  .app {
+    padding: var(--space-3);
+  }
+
+  .container {
+    border-radius: var(--radius-lg);
+  }
+
+  .header {
+    padding: var(--space-6) var(--space-4);
+  }
+
+  .main {
+    padding: var(--space-5) var(--space-4);
+  }
+
+  .tabs {
+    width: 100%;
+  }
+
+  .tab {
+    flex: 1;
+    justify-content: center;
+    padding: var(--space-2);
+  }
+
+  .button-row .btn {
+    flex: 1;
+    min-width: 130px;
+  }
+
+  .footer {
+    padding: var(--space-4);
+  }
+}
+
+@media (max-width: 480px) {
+  /*
+   * Labels are hidden to fit four tabs on a narrow screen. The buttons keep an
+   * accessible name through aria-label in TabBar.jsx — do not remove it.
+   */
+  .tab__label {
+    display: none;
+  }
+
+  .tab {
+    padding: var(--space-3);
+  }
+
+  .btn-hint {
+    display: none;
+  }
+}

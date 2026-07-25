@@ -1,4 +1,11 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { getItem, setItem, STORAGE_KEYS } from '../lib/storage';
 
 const ThemeContext = createContext(null);
@@ -25,7 +32,8 @@ export function ThemeProvider({ children }) {
   useEffect(() => {
     if (fromUser || !window.matchMedia) return;
     const mq = window.matchMedia('(prefers-color-scheme: dark)');
-    const onChange = (e) => setState({ theme: e.matches ? 'dark' : 'light', fromUser: false });
+    const onChange = (e) =>
+      setState({ theme: e.matches ? 'dark' : 'light', fromUser: false });
     mq.addEventListener('change', onChange);
     return () => mq.removeEventListener('change', onChange);
   }, [fromUser]);

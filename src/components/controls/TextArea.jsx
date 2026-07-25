@@ -2,7 +2,17 @@ import { forwardRef } from 'react';
 import { TextStats } from './TextStats';
 
 export const TextArea = forwardRef(function TextArea(
-  { label, value, onChange, placeholder, readOnly, onKeyDown, showStats = true, id, rows },
+  {
+    label,
+    value,
+    onChange,
+    placeholder,
+    readOnly,
+    onKeyDown,
+    showStats = true,
+    id,
+    rows,
+  },
   ref
 ) {
   return (

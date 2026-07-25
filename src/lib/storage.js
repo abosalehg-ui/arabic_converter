@@ -14,6 +14,7 @@ export function getItem(key, fallback = null) {
   }
 }
 
+/** @returns {boolean} false when the value could not be stored (quota, private mode). */
 export function setItem(key, value) {
   try {
     const serialized = typeof value === 'string' ? value : JSON.stringify(value);
@@ -36,4 +37,5 @@ export const STORAGE_KEYS = {
   theme: 'ac-theme',
   lang: 'ac-lang',
   history: 'ac-history',
+  historyEnabled: 'ac-history-enabled',
 };

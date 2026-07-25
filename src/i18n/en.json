@@ -1,12 +1,12 @@
 {
   "header.title": "Arabic Text Reverser",
   "header.subtitle": "A modern tool to reverse and shape Arabic text",
-  "header.toggleTheme": "Toggle theme",
   "header.toggleTheme.toDark": "Switch to dark mode",
   "header.toggleTheme.toLight": "Switch to light mode",
   "header.openHistory": "Open conversion history",
   "header.openPalette": "Open command palette",
   "header.toggleLanguage": "ع",
+  "header.switchLanguage": "Switch to Arabic",
 
   "tabs.text": "Text",
   "tabs.file": "File",
@@ -19,10 +19,10 @@
   "text.outputPlaceholder": "The result will appear here...",
   "text.examplesTitle": "Example",
   "text.exampleBefore": "Original: مرحبا بكم",
-  "text.exampleAfter": "Converted: مكب احبرم",
+  "text.exampleAfter": "Converted: ﻢﻜﺑ ﺎﺒﺣﺮﻣ",
 
   "file.dropTitle": "Drag a file here or click to choose",
-  "file.dropHint": "Supports .txt files only",
+  "file.dropHint": ".txt files only · up to {max} MB",
   "file.selected": "Selected file:",
   "file.outputLabel": "Processed file content",
   "file.outputPlaceholder": "Processed content will appear here...",
@@ -30,16 +30,16 @@
   "file.download": "Download result",
 
   "color.inputLabel": "Text with color tags",
-  "color.inputPlaceholder": "Example: <clr:255,212,255>Arabic text</clr:255,212,255>",
+  "color.inputPlaceholder": "Example: <clr:255,212,255>Arabic text",
   "color.outputLabel": "Result",
   "color.outputPlaceholder": "Processed text will appear here...",
   "color.examplesTitle": "Colored text example",
-  "color.exampleBefore": "Original: <clr:255,212,255>مرحبا</clr>",
-  "color.exampleAfter": "Converted: <clr:255,212,255>ابحرم</clr>",
+  "color.exampleBefore": "Original: <clr:255,212,255>مرحبا",
+  "color.exampleAfter": "Converted: <clr:255,212,255>ﺎﺒﺣﺮﻣ",
   "color.process": "Process colored text",
 
   "quoted.instructionsTitle": "How it works",
-  "quoted.instructionsIntro": "Processes Arabic text inside quotation marks",
+  "quoted.instructionsIntro": "Converts every Arabic span inside double quotes and leaves non-Arabic keys untouched",
   "quoted.pattern1": "\"Arabic text\"",
   "quoted.pattern2": "\"Any text\" \"Arabic text\"",
   "quoted.pattern3": "\"ep_02.test\" \"Arabic text\"",
@@ -53,6 +53,11 @@
   "actions.convert": "Convert",
   "actions.clear": "Clear",
   "actions.copy": "Copy",
+  "actions.close": "Close",
+  "actions.shortcutHint": "to convert",
+
+  "progress.converting": "Converting...",
+  "progress.processingFile": "Processing file...",
 
   "stats.chars": "{n} chars",
   "stats.words": "{n} words",
@@ -81,13 +86,17 @@
   "history.delete": "Delete",
   "history.clearAll": "Clear all",
   "history.confirmClear": "Delete all history entries?",
+  "history.persistLabel": "Save history on this device",
+  "history.storageFailed": "History could not be saved (storage full) — it only lives in this session",
   "history.justNow": "just now",
   "history.minutesAgo": "{n}m ago",
   "history.hoursAgo": "{n}h ago",
   "history.daysAgo": "{n}d ago",
 
   "toast.convertSuccess": "Converted successfully!",
+  "toast.convertFailed": "The conversion could not be completed",
   "toast.copySuccess": "Copied to clipboard",
+  "toast.copyFailed": "Copy failed — check the browser's clipboard permission",
   "toast.fileSelected": "File selected",
   "toast.fileProcessed": "File processed!",
   "toast.fileDownloaded": "File downloaded",
@@ -95,6 +104,7 @@
   "toast.emptyInput": "Please enter some text first",
   "toast.nothingToCopy": "Nothing to copy",
   "toast.invalidFile": "Please choose a .txt file",
+  "toast.fileTooLarge": "File is larger than the {max} MB limit",
   "toast.fileReadError": "Could not read the file",
   "toast.noFile": "Please choose a file first",
   "toast.nothingToDownload": "Nothing to download",
@@ -102,5 +112,6 @@
   "toast.historyCleared": "History cleared",
 
   "footer.credit": "Built by Abdulkarim Al-Aboud",
-  "footer.copyright": "© 2024 All rights reserved"
+  "footer.repoLink": "Repository on GitHub",
+  "footer.copyright": "© {year} All rights reserved"
 }
