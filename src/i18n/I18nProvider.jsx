@@ -1,4 +1,11 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { getItem, setItem, STORAGE_KEYS } from '../lib/storage';
 import ar from './ar.json';
 import en from './en.json';
@@ -8,13 +15,21 @@ const DEFAULT_LANG = 'ar';
 
 const I18nContext = createContext(null);
 
+/**
+ * Both branches of the previous version returned Arabic, so an English browser
+ * always got an Arabic UI. Keep this in sync with `public/theme-init.js`, which
+ * applies the same rule before React mounts.
+ */
 function resolveInitialLang() {
   const stored = getItem(STORAGE_KEYS.lang);
   if (stored === 'ar' || stored === 'en') return stored;
-  if (typeof navigator !== 'undefined' && navigator.language?.startsWith('ar')) {
+  if (
+    typeof navigator !== 'undefined' &&
+    navigator.language?.toLowerCase().startsWith('ar')
+  ) {
     return 'ar';
   }
-  return DEFAULT_LANG;
+  return 'en';
 }
 
 function interpolate(template, params) {

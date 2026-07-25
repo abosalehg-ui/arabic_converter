@@ -1,12 +1,12 @@
 {
   "header.title": "عاكس النصوص العربية",
   "header.subtitle": "أداة عصرية لعكس وتشكيل النصوص العربية",
-  "header.toggleTheme": "تبديل الثيم",
   "header.toggleTheme.toDark": "تفعيل الوضع الليلي",
   "header.toggleTheme.toLight": "تفعيل الوضع النهاري",
   "header.openHistory": "فتح سجل التحويلات",
   "header.openPalette": "فتح لوحة الأوامر",
   "header.toggleLanguage": "EN",
+  "header.switchLanguage": "التبديل إلى الإنجليزية",
 
   "tabs.text": "تحويل النص",
   "tabs.file": "معالجة الملفات",
@@ -19,10 +19,10 @@
   "text.outputPlaceholder": "النتيجة ستظهر هنا...",
   "text.examplesTitle": "مثال على التحويل",
   "text.exampleBefore": "الأصل: مرحبا بكم",
-  "text.exampleAfter": "المحوّل: مكب احبرم",
+  "text.exampleAfter": "المحوّل: ﻢﻜﺑ ﺎﺒﺣﺮﻣ",
 
   "file.dropTitle": "اسحب الملف هنا أو انقر للاختيار",
-  "file.dropHint": "يدعم ملفات ‎.txt فقط",
+  "file.dropHint": "ملفات ‎.txt فقط · بحد أقصى {max} ميجابايت",
   "file.selected": "تم اختيار الملف:",
   "file.outputLabel": "محتوى الملف بعد المعالجة",
   "file.outputPlaceholder": "محتوى الملف المعالج سيظهر هنا...",
@@ -30,16 +30,16 @@
   "file.download": "تنزيل النتيجة",
 
   "color.inputLabel": "النص مع العلامات الملونة",
-  "color.inputPlaceholder": "مثال: <clr:255,212,255>النص العربي</clr:255,212,255>",
+  "color.inputPlaceholder": "مثال: <clr:255,212,255>النص العربي",
   "color.outputLabel": "النتيجة",
   "color.outputPlaceholder": "النص المعالج سيظهر هنا...",
   "color.examplesTitle": "مثال على النصوص الملونة",
-  "color.exampleBefore": "الأصل: <clr:255,212,255>مرحبا</clr>",
-  "color.exampleAfter": "المحوّل: <clr:255,212,255>ابحرم</clr>",
+  "color.exampleBefore": "الأصل: <clr:255,212,255>مرحبا",
+  "color.exampleAfter": "المحوّل: <clr:255,212,255>ﺎﺒﺣﺮﻣ",
   "color.process": "معالجة النص الملون",
 
   "quoted.instructionsTitle": "تعليمات الاستخدام",
-  "quoted.instructionsIntro": "يعالج هذا التبويب النصوص العربية بين علامات التنصيص",
+  "quoted.instructionsIntro": "يعالج هذا التبويب كل نص عربي بين علامتي تنصيص، ويترك المفاتيح غير العربية كما هي",
   "quoted.pattern1": "\"النص العربي\"",
   "quoted.pattern2": "\"أي نص\" \"النص العربي\"",
   "quoted.pattern3": "\"ep_02.test\" \"النص العربي\"",
@@ -53,6 +53,11 @@
   "actions.convert": "تحويل النص",
   "actions.clear": "مسح الكل",
   "actions.copy": "نسخ النتيجة",
+  "actions.close": "إغلاق",
+  "actions.shortcutHint": "للتحويل",
+
+  "progress.converting": "جارٍ التحويل...",
+  "progress.processingFile": "جارٍ معالجة الملف...",
 
   "stats.chars": "{n} حرف",
   "stats.words": "{n} كلمة",
@@ -81,13 +86,17 @@
   "history.delete": "حذف",
   "history.clearAll": "مسح الكل",
   "history.confirmClear": "هل أنت متأكد من حذف جميع السجلات؟",
+  "history.persistLabel": "حفظ السجل على هذا الجهاز",
+  "history.storageFailed": "تعذّر حفظ السجل (مساحة التخزين ممتلئة) — السجل موجود في هذه الجلسة فقط",
   "history.justNow": "الآن",
   "history.minutesAgo": "منذ {n} دقيقة",
   "history.hoursAgo": "منذ {n} ساعة",
   "history.daysAgo": "منذ {n} يوم",
 
   "toast.convertSuccess": "تم التحويل بنجاح!",
+  "toast.convertFailed": "تعذّر إتمام التحويل",
   "toast.copySuccess": "تم النسخ إلى الحافظة",
+  "toast.copyFailed": "تعذّر النسخ — تحقق من إذن الحافظة في المتصفح",
   "toast.fileSelected": "تم اختيار الملف بنجاح",
   "toast.fileProcessed": "تمت معالجة الملف بنجاح!",
   "toast.fileDownloaded": "تم تنزيل الملف",
@@ -95,6 +104,7 @@
   "toast.emptyInput": "يرجى إدخال نص أولاً",
   "toast.nothingToCopy": "لا يوجد نص للنسخ",
   "toast.invalidFile": "يرجى اختيار ملف ‎.txt فقط",
+  "toast.fileTooLarge": "الملف أكبر من الحد المسموح ({max} ميجابايت)",
   "toast.fileReadError": "حدث خطأ في قراءة الملف",
   "toast.noFile": "يرجى اختيار ملف أولاً",
   "toast.nothingToDownload": "لا يوجد محتوى للتنزيل",
@@ -102,5 +112,6 @@
   "toast.historyCleared": "تم مسح السجل",
 
   "footer.credit": "تطوير: عبدالكريم العبود",
-  "footer.copyright": "© 2024 جميع الحقوق محفوظة"
+  "footer.repoLink": "المستودع على GitHub",
+  "footer.copyright": "© {year} جميع الحقوق محفوظة"
 }

@@ -1,116 +1,98 @@
-import { useCallback, useImperativeHandle, useRef, useState, forwardRef } from 'react';
-import { Download, Play, Upload, FileCheck2 } from 'lucide-react';
+import { useCallback, useRef, useState } from 'react';
+import { Download, FileCheck2, Play, Upload } from 'lucide-react';
 import { TextArea } from '../controls/TextArea';
-import converter from '../../lib/arabicConverter';
+import { Progress } from '../controls/Progress';
 import { useI18n } from '../../i18n/I18nProvider';
 import { useToast } from '../../feedback/ToastProvider';
-import { useHistory } from '../../history/HistoryProvider';
+import { MAX_FILE_BYTES, useTabs } from '../../state/TabsProvider';
 
-export const FileProcessor = forwardRef(function FileProcessor(_, ref) {
+const MAX_FILE_MB = Math.round(MAX_FILE_BYTES / (1024 * 1024));
+
+export function FileProcessor() {
   const { t } = useI18n();
   const { showToast } = useToast();
-  const { addEntry } = useHistory();
+  const { file, setFile, fileOutput, setFileOutput, runFileTab, busy, progress } =
+    useTabs();
   const inputRef = useRef(null);
-  const [file, setFile] = useState(null);
-  const [output, setOutput] = useState('');
   const [dragOver, setDragOver] = useState(false);
 
   const handleFile = useCallback(
     (files) => {
-      if (!files || files.length === 0) return;
-      const picked = files[0];
+      const picked = files?.[0];
+      if (!picked) return;
+
       if (!picked.name.toLowerCase().endsWith('.txt')) {
         showToast(t('toast.invalidFile'), 'error');
         return;
       }
+      // A multi-hundred-megabyte "text" file would be read into memory whole
+      // and freeze the tab, so refuse it up front with a reason.
+      if (picked.size > MAX_FILE_BYTES) {
+        showToast(t('toast.fileTooLarge', { max: MAX_FILE_MB }), 'error');
+        return;
+      }
+
       setFile(picked);
-      setOutput('');
+      setFileOutput('');
       showToast(t('toast.fileSelected'), 'success');
     },
-    [showToast, t]
+    [setFile, setFileOutput, showToast, t]
   );
 
-  const process = useCallback(() => {
-    if (!file) {
-      showToast(t('toast.noFile'), 'error');
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const content = String(e.target.result || '');
-      const processed = content.includes('<clr:')
-        ? converter.processColorTags(content)
-        : converter.convertText(content);
-      setOutput(processed);
-      addEntry({
-        type: 'file',
-        input: content,
-        output: processed,
-        meta: { filename: file.name },
-      });
-      showToast(t('toast.fileProcessed'), 'success');
-    };
-    reader.onerror = () => showToast(t('toast.fileReadError'), 'error');
-    reader.readAsText(file, 'utf-8');
-  }, [file, addEntry, showToast, t]);
-
   const download = useCallback(() => {
-    if (!output) {
+    if (!fileOutput) {
       showToast(t('toast.nothingToDownload'), 'error');
       return;
     }
-    const blob = new Blob([output], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    const original = (file?.name || 'output').replace(/\.txt$/i, '');
-    a.href = url;
-    a.download = `${original}_converted.txt`;
-    a.click();
-    URL.revokeObjectURL(url);
-    showToast(t('toast.fileDownloaded'), 'success');
-  }, [output, file, showToast, t]);
 
-  useImperativeHandle(ref, () => ({
-    convert: process,
-    clear: () => {
-      setFile(null);
-      setOutput('');
-      if (inputRef.current) inputRef.current.value = '';
-    },
-  }), [process]);
+    const blob = new Blob([fileOutput], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = `${(file?.name || 'output').replace(/\.txt$/i, '')}_converted.txt`;
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    // Revoking synchronously right after click() cancels the download in some
+    // browsers, so give the download a moment to start first.
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    showToast(t('toast.fileDownloaded'), 'success');
+  }, [fileOutput, file, showToast, t]);
 
   return (
     <div className="tab-panel">
-      <button
-        type="button"
+      {/*
+        A label rather than a button: an <input> nested inside a <button> is
+        invalid HTML and gives assistive technology two conflicting controls.
+      */}
+      <label
         className={`file-drop ${dragOver ? 'file-drop--active' : ''}`}
-        onClick={() => inputRef.current?.click()}
-        onDragOver={(e) => {
-          e.preventDefault();
+        onDragOver={(event) => {
+          event.preventDefault();
           setDragOver(true);
         }}
         onDragLeave={() => setDragOver(false)}
-        onDrop={(e) => {
-          e.preventDefault();
+        onDrop={(event) => {
+          event.preventDefault();
           setDragOver(false);
-          handleFile(e.dataTransfer.files);
+          handleFile(event.dataTransfer.files);
         }}
       >
-        <Upload className="file-drop__icon" />
+        <Upload className="file-drop__icon" aria-hidden="true" />
         <div className="file-drop__title">{t('file.dropTitle')}</div>
-        <div className="file-drop__hint">{t('file.dropHint')}</div>
+        <div className="file-drop__hint">{t('file.dropHint', { max: MAX_FILE_MB })}</div>
         <input
           ref={inputRef}
           type="file"
-          accept=".txt"
-          hidden
-          onChange={(e) => handleFile(e.target.files)}
+          accept="text/plain,.txt"
+          className="sr-only"
+          onChange={(event) => handleFile(event.target.files)}
         />
-      </button>
+      </label>
 
       {file && (
         <div className="file-info">
-          <FileCheck2 />
+          <FileCheck2 aria-hidden="true" />
           <span>
             <strong>{t('file.selected')}</strong> {file.name}
           </span>
@@ -118,23 +100,35 @@ export const FileProcessor = forwardRef(function FileProcessor(_, ref) {
       )}
 
       <div className="button-row">
-        <button type="button" className="btn btn--primary" onClick={process} disabled={!file}>
+        <button
+          type="button"
+          className="btn btn--primary"
+          onClick={runFileTab}
+          disabled={!file || busy}
+        >
           <Play />
           {t('file.process')}
         </button>
-        <button type="button" className="btn btn--success" onClick={download} disabled={!output}>
+        <button
+          type="button"
+          className="btn btn--success"
+          onClick={download}
+          disabled={!fileOutput}
+        >
           <Download />
           {t('file.download')}
         </button>
       </div>
 
+      {busy && <Progress value={progress} label={t('progress.processingFile')} />}
+
       <TextArea
         id="file-output"
         label={t('file.outputLabel')}
-        value={output}
+        value={fileOutput}
         readOnly
         placeholder={t('file.outputPlaceholder')}
       />
     </div>
   );
-});
+}

@@ -1,4 +1,12 @@
-import { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { CheckCircle2, AlertCircle } from 'lucide-react';
 
 const ToastContext = createContext(null);
@@ -12,6 +20,9 @@ export function ToastProvider({ children }) {
     setToast({ message, type, id: Date.now() });
     timerRef.current = setTimeout(() => setToast(null), 2800);
   }, []);
+
+  // Without this the pending timer keeps a reference after unmount.
+  useEffect(() => () => clearTimeout(timerRef.current), []);
 
   const value = useMemo(() => ({ showToast }), [showToast]);
 
