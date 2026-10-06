@@ -5,13 +5,7 @@
  * by line is safe because every processor is line-scoped: `convertText` splits
  * on newlines, and the colour/quote patterns cannot match across a newline.
  */
-import converter from './arabicConverter';
-
-const PROCESSORS = {
-  text: (input) => converter.convertText(input),
-  color: (input) => converter.processColorTags(input),
-  quoted: (input) => converter.processQuotedText(input),
-};
+import { PROCESSORS } from './arabicConverter';
 
 const CHUNK_LINES = 2000;
 

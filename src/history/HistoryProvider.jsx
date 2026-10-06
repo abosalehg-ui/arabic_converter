@@ -39,9 +39,18 @@ function loadEntries() {
   return Array.isArray(saved) ? saved.filter(isValidEntry).slice(0, MAX_ENTRIES) : [];
 }
 
+/**
+ * Saving history is opt-in: the text people convert is often unreleased
+ * material, and `*.github.io` storage is shared by every project on the
+ * account. Until the user turns it on, history lives only in this session.
+ */
 function loadPersistPreference() {
   const saved = getItem(STORAGE_KEYS.historyEnabled);
-  return saved === false ? false : true;
+  if (saved === true || saved === false) return saved;
+  // Earlier versions saved by default without recording a preference. Someone
+  // who already has saved history keeps it on, rather than being left with
+  // stored text behind a switch that claims nothing is saved.
+  return getItem(STORAGE_KEYS.history) !== null;
 }
 
 export function HistoryProvider({ children }) {

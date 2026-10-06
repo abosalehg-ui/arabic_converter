@@ -31,6 +31,31 @@
     box-shadow 0.15s ease;
 }
 
+/*
+ * Output boxes preview the text the way the target renderer will draw it:
+ * strictly left to right, with no bidi reordering. Without the override the
+ * browser's own bidi engine reverses the already-reversed text a second time,
+ * so correct output looked backwards here.
+ */
+.field__textarea--visual {
+  direction: ltr;
+  unicode-bidi: bidi-override;
+  text-align: left;
+}
+
+/* The placeholder is ordinary UI text and keeps the page's direction. */
+.field__textarea--visual:placeholder-shown {
+  direction: inherit;
+  unicode-bidi: normal;
+  text-align: start;
+}
+
+.field__hint {
+  margin-top: var(--space-2);
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
 .field__textarea:hover {
   border-color: var(--border-medium);
 }

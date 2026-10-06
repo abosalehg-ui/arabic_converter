@@ -12,6 +12,8 @@ export const TextArea = forwardRef(function TextArea(
     showStats = true,
     id,
     rows,
+    visualPreview = false,
+    hint,
   },
   ref
 ) {
@@ -25,7 +27,8 @@ export const TextArea = forwardRef(function TextArea(
       <textarea
         id={id}
         ref={ref}
-        className="field__textarea"
+        className={`field__textarea ${visualPreview ? 'field__textarea--visual' : ''}`}
+        aria-describedby={hint ? `${id}-hint` : undefined}
         value={value}
         onChange={onChange ? (e) => onChange(e.target.value) : undefined}
         onKeyDown={onKeyDown}
@@ -33,6 +36,11 @@ export const TextArea = forwardRef(function TextArea(
         readOnly={readOnly}
         rows={rows}
       />
+      {hint && (
+        <p className="field__hint" id={`${id}-hint`}>
+          {hint}
+        </p>
+      )}
       {showStats && <TextStats text={value} />}
     </div>
   );

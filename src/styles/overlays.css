@@ -190,6 +190,13 @@
   cursor: pointer;
 }
 
+.drawer__hint {
+  padding: var(--space-2) var(--space-5);
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
 .drawer__toggle input {
   accent-color: var(--accent-primary);
   width: 16px;

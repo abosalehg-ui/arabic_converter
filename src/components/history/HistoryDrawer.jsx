@@ -82,6 +82,8 @@ export function HistoryDrawer({ onClose }) {
           <span>{t('history.persistLabel')}</span>
         </label>
 
+        {!persist && <p className="drawer__hint">{t('history.sessionOnly')}</p>}
+
         {storageFailed && (
           <div className="drawer__toggle" role="status">
             <AlertCircle aria-hidden="true" width={16} height={16} />

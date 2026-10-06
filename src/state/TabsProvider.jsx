@@ -3,6 +3,7 @@ import { useI18n } from '../i18n/I18nProvider';
 import { useToast } from '../feedback/ToastProvider';
 import { useHistory } from '../history/HistoryProvider';
 import { useConverterWorker } from '../hooks/useConverterWorker';
+import converter from '../lib/arabicConverter';
 
 /**
  * Owns the state of every tab.
@@ -66,7 +67,13 @@ export function TabsProvider({ children }) {
         const output = await run(input, id);
         setTabs((previous) => ({ ...previous, [id]: { ...previous[id], output } }));
         addEntry({ type: id, input, output });
-        showToast(t('toast.convertSuccess'), 'success');
+        // Converting the converter's own output undoes the reversal, so say so
+        // instead of letting a pasted-twice text fail silently.
+        if (converter.looksConverted(input)) {
+          showToast(t('toast.alreadyConverted'), 'error');
+        } else {
+          showToast(t('toast.convertSuccess'), 'success');
+        }
       } catch {
         showToast(t('toast.convertFailed'), 'error');
       }
@@ -96,7 +103,11 @@ export function TabsProvider({ children }) {
       const output = await run(content, mode);
       setFileOutput(output);
       addEntry({ type: 'file', input: content, output, meta: { filename: file.name } });
-      showToast(t('toast.fileProcessed'), 'success');
+      if (converter.looksConverted(content)) {
+        showToast(t('toast.alreadyConverted'), 'error');
+      } else {
+        showToast(t('toast.fileProcessed'), 'success');
+      }
     } catch {
       showToast(t('toast.convertFailed'), 'error');
     }

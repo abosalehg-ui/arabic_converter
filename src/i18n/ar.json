@@ -58,6 +58,7 @@
 
   "progress.converting": "جارٍ التحويل...",
   "progress.processingFile": "جارٍ معالجة الملف...",
+  "output.previewHint": "المعاينة تعرض النص كما سيظهر في برنامج لا يدعم العربية.",
 
   "stats.chars": "{n} حرف",
   "stats.words": "{n} كلمة",
@@ -87,6 +88,7 @@
   "history.clearAll": "مسح الكل",
   "history.confirmClear": "هل أنت متأكد من حذف جميع السجلات؟",
   "history.persistLabel": "حفظ السجل على هذا الجهاز",
+  "history.sessionOnly": "الحفظ معطّل: السجل يبقى في هذه الجلسة فقط ويُحذف عند إغلاق الصفحة.",
   "history.storageFailed": "تعذّر حفظ السجل (مساحة التخزين ممتلئة) — السجل موجود في هذه الجلسة فقط",
   "history.justNow": "الآن",
   "history.minutesAgo": "منذ {n} دقيقة",
@@ -110,6 +112,7 @@
   "toast.nothingToDownload": "لا يوجد محتوى للتنزيل",
   "toast.historyRestored": "تم استعادة العنصر",
   "toast.historyCleared": "تم مسح السجل",
+  "toast.alreadyConverted": "يبدو أن النص محوّل مسبقًا — تحويله مرة ثانية يُلغي العكس",
 
   "footer.credit": "تطوير: عبدالكريم العبود",
   "footer.repoLink": "المستودع على GitHub",

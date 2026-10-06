@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import converter from '../lib/arabicConverter';
+import { PROCESSORS } from '../lib/arabicConverter';
 
 /**
  * Inputs shorter than this are converted synchronously: spawning a worker and
@@ -7,12 +7,6 @@ import converter from '../lib/arabicConverter';
  * result should feel instant while typing.
  */
 const SYNC_THRESHOLD = 50_000;
-
-const SYNC_PROCESSORS = {
-  text: (input) => converter.convertText(input),
-  color: (input) => converter.processColorTags(input),
-  quoted: (input) => converter.processQuotedText(input),
-};
 
 /**
  * Runs conversions in a Web Worker, falling back to synchronous work when
@@ -59,6 +53,10 @@ export function useConverterWorker() {
         }
         pendingRef.current.clear();
         setBusy(false);
+        // A crashed worker cannot be trusted with the next job. Drop it so the
+        // next large conversion spins up a fresh one.
+        worker.terminate();
+        if (workerRef.current === worker) workerRef.current = null;
       };
 
       workerRef.current = worker;
@@ -80,7 +78,7 @@ export function useConverterWorker() {
 
   const run = useCallback(
     (content, mode) => {
-      const processSync = SYNC_PROCESSORS[mode];
+      const processSync = PROCESSORS[mode];
 
       if (content.length < SYNC_THRESHOLD) {
         return Promise.resolve(processSync(content));
