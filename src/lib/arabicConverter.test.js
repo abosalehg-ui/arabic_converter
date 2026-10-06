@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import converter, { ArabicConverter } from './arabicConverter';
+import converter, { ArabicConverter, PROCESSORS } from './arabicConverter';
 
 /** Renders a string as space-separated hex code points, for readable failures. */
 const codes = (s) =>
@@ -196,6 +196,77 @@ describe('reversing and mixed text', () => {
   });
 });
 
+describe('line endings', () => {
+  it('keeps a CRLF line ending at the end of the line (regression: \\r moved to the start)', () => {
+    const out = converter.convertText('سلام\r\nعالم');
+    expect(out).toBe(
+      `${converter.convertText('سلام')}\r\n${converter.convertText('عالم')}`
+    );
+  });
+
+  it('leaves CRLF lines without Arabic untouched', () => {
+    expect(converter.convertText('abc\r\nxyz\r\n')).toBe('abc\r\nxyz\r\n');
+  });
+
+  it('keeps CRLF intact inside colour tags and quoted spans', () => {
+    expect(converter.processColorTags('<clr:1,2,3>نص\r\n').endsWith('\r\n')).toBe(true);
+    expect(converter.processQuotedText('"نص"\r\n"نص"').split('\r\n')).toHaveLength(2);
+  });
+});
+
+describe('brackets and edge punctuation', () => {
+  it('mirrors brackets around an Arabic word (regression: they came out inverted)', () => {
+    expect(converter.convertText('(مرحبا)')).toBe(`(${converter.convertText('مرحبا')})`);
+    expect(converter.convertText('[مرحبا]')).toBe(`[${converter.convertText('مرحبا')}]`);
+    expect(converter.convertText('«مرحبا»')).toBe(`«${converter.convertText('مرحبا')}»`);
+  });
+
+  it('keeps brackets around mixed Arabic and digits in the right place', () => {
+    expect(converter.convertText('(مرحبا 123)')).toBe(
+      `(123 ${converter.convertText('مرحبا')})`
+    );
+  });
+
+  it('places trailing Latin punctuation on the right-to-left side of the run', () => {
+    expect(converter.convertText('Hello, مرحبا')).toBe(
+      `${converter.convertText('مرحبا')} ,Hello`
+    );
+  });
+
+  it('keeps brackets inside an embedded left-to-right phrase as they are', () => {
+    expect(converter.convertText('القيمة f(x) هنا')).toContain(' f(x) ');
+  });
+
+  it('keeps a markup tag in one piece', () => {
+    expect(converter.convertText('<b>نص</b>')).toBe(
+      `</b>${converter.convertText('نص')}<b>`
+    );
+  });
+});
+
+describe('Persian and Urdu letters', () => {
+  it('shapes پ چ ژ ک گ ی by position', () => {
+    // پیام: پ initial, ی medial, ا final, م isolated
+    expect(codes(converter.shapeText('پیام'))).toBe('fb58 fbff fe8e 0645');
+    expect(codes(converter.shapeText('چگک'))).toBe('fb7c fb95 fb8f');
+    // ژ never joins the letter after it
+    expect(codes(converter.shapeText('بژب'))).toBe('fe91 fb8b 0628');
+  });
+});
+
+describe('looksConverted', () => {
+  it('detects text that is already converter output', () => {
+    expect(converter.looksConverted(converter.convertText('مرحبا بكم'))).toBe(true);
+    expect(converter.looksConverted(converter.convertText('پیام'))).toBe(true);
+  });
+
+  it('does not flag plain Arabic or non-Arabic text', () => {
+    expect(converter.looksConverted('مرحبا بكم')).toBe(false);
+    expect(converter.looksConverted('Hello 123')).toBe(false);
+    expect(converter.looksConverted('')).toBe(false);
+  });
+});
+
 describe('processColorTags', () => {
   it('converts the Arabic inside a colour tag and keeps the tag intact', () => {
     const out = converter.processColorTags('<clr:255,212,255>مرحبا');
@@ -255,6 +326,15 @@ describe('processQuotedText', () => {
 
   it('tolerates an unbalanced quote', () => {
     expect(converter.processQuotedText('"مرحبا')).toBe('"مرحبا');
+  });
+});
+
+describe('PROCESSORS', () => {
+  it('maps every mode to the matching converter method', () => {
+    const input = '<clr:1,2,3>نص "قول"';
+    expect(PROCESSORS.text(input)).toBe(converter.convertText(input));
+    expect(PROCESSORS.color(input)).toBe(converter.processColorTags(input));
+    expect(PROCESSORS.quoted(input)).toBe(converter.processQuotedText(input));
   });
 });
 

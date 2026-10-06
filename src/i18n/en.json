@@ -58,6 +58,7 @@
 
   "progress.converting": "Converting...",
   "progress.processingFile": "Processing file...",
+  "output.previewHint": "The preview shows the text as a renderer without Arabic support will display it.",
 
   "stats.chars": "{n} chars",
   "stats.words": "{n} words",
@@ -87,6 +88,7 @@
   "history.clearAll": "Clear all",
   "history.confirmClear": "Delete all history entries?",
   "history.persistLabel": "Save history on this device",
+  "history.sessionOnly": "Saving is off: history stays in this session only and is gone when you close the page.",
   "history.storageFailed": "History could not be saved (storage full) — it only lives in this session",
   "history.justNow": "just now",
   "history.minutesAgo": "{n}m ago",
@@ -110,6 +112,7 @@
   "toast.nothingToDownload": "Nothing to download",
   "toast.historyRestored": "Entry restored",
   "toast.historyCleared": "History cleared",
+  "toast.alreadyConverted": "This text looks already converted — converting it again undoes the reversal",
 
   "footer.credit": "Built by Abdulkarim Al-Aboud",
   "footer.repoLink": "Repository on GitHub",

@@ -97,6 +97,8 @@ export function ProcessorTab({
         value={output}
         readOnly
         placeholder={t(`${id}.outputPlaceholder`)}
+        visualPreview
+        hint={t('output.previewHint')}
       />
 
       {after}

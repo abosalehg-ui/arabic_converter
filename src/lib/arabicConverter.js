@@ -58,6 +58,13 @@ const FORM_TABLE = [
   [0x0648, 0xfeee, null, null], // و
   [0x0649, 0xfef0, null, null], // ى
   [0x064a, 0xfef2, 0xfef3, 0xfef4], // ي
+  // Persian / Urdu letters (Presentation Forms-A).
+  [0x067e, 0xfb57, 0xfb58, 0xfb59], // پ
+  [0x0686, 0xfb7b, 0xfb7c, 0xfb7d], // چ
+  [0x0698, 0xfb8b, null, null], // ژ
+  [0x06a9, 0xfb8f, 0xfb90, 0xfb91], // ک
+  [0x06af, 0xfb93, 0xfb94, 0xfb95], // گ
+  [0x06cc, 0xfbfd, 0xfbfe, 0xfbff], // ی
 ];
 
 /**
@@ -93,6 +100,28 @@ const ARABIC_DIGITS = [
 
 const IS_MARK = /\p{Mn}/u;
 const IS_SPACE = /\s/;
+/** Letters and digits: the characters that give a neutral run its own LTR order. */
+const IS_STRONG_LTR = /[\p{L}\p{N}]/u;
+
+/**
+ * Paired punctuation that a bidi engine mirrors when it sits in a right-to-left
+ * context. Without this, "(نص)" comes out as ")صن(" in a left-to-right renderer.
+ */
+const MIRRORED = new Map(
+  ['()', '[]', '{}', '<>', '«»', '‹›'].flatMap(([open, close]) => [
+    [open, close],
+    [close, open],
+  ])
+);
+
+/** Presentation Forms-A and -B: what the converter itself outputs. */
+const PRESENTATION_FORMS = [
+  [0xfb50, 0xfdff],
+  [0xfe70, 0xfeff],
+];
+
+/** A whole markup tag such as `<b>` or `</color>`, kept as one unit. */
+const IS_TAG = /^<[^<>]*>$/;
 
 const inRanges = (code, ranges) =>
   ranges.some(([from, to]) => code >= from && code <= to);
@@ -114,6 +143,28 @@ const FORMS = new Map(
 const RUN_ARABIC = 'arabic';
 const RUN_SPACE = 'space';
 const RUN_NEUTRAL = 'neutral';
+/** Punctuation that follows the right-to-left flow of the line (and is mirrored). */
+const RUN_RTL_NEUTRAL = 'rtl-neutral';
+
+const BRACKET_PAIRS = ['()', '[]', '{}'];
+
+/** Net count of `open` minus `close` in `chars`. */
+const depth = (chars, open, close) =>
+  chars.reduce((n, char) => n + (char === open) - (char === close), 0);
+
+/** True when `char` closes a bracket left open inside `chars`. */
+const closesOpenBracket = (chars, char) =>
+  BRACKET_PAIRS.some(([open, close]) => char === close && depth(chars, open, close) > 0);
+
+/** True when `char` opens a bracket that is closed inside `chars`. */
+const opensClosedBracket = (chars, char) =>
+  BRACKET_PAIRS.some(([open, close]) => char === open && depth(chars, open, close) < 0);
+
+const mirror = (text) =>
+  Array.from(text)
+    .reverse()
+    .map((char) => MIRRORED.get(char) ?? char)
+    .join('');
 
 export class ArabicConverter {
   /** True for Arabic-script characters, excluding Arabic-Indic digits. */
@@ -138,6 +189,23 @@ export class ArabicConverter {
   hasArabic(text) {
     if (!text) return false;
     return Array.from(text).some((char) => this.isArabic(char) && !this.isMark(char));
+  }
+
+  /**
+   * True when most Arabic letters in `text` are already presentation forms,
+   * i.e. the text looks like this converter's own output. Converting it again
+   * would undo the reversal and leave broken shapes behind.
+   */
+  looksConverted(text) {
+    if (!text) return false;
+    let letters = 0;
+    let presentation = 0;
+    for (const char of text) {
+      if (!this.isArabic(char) || this.isMark(char)) continue;
+      letters++;
+      if (inRanges(char.codePointAt(0), PRESENTATION_FORMS)) presentation++;
+    }
+    return letters > 0 && presentation / letters > 0.5;
   }
 
   /** A letter can take a final/medial form when something joins it from the right. */
@@ -273,7 +341,7 @@ export class ArabicConverter {
       }
     }
 
-    return this.#mergeNeutralRuns(runs);
+    return this.#splitNeutralEdges(this.#mergeNeutralRuns(runs));
   }
 
   /**
@@ -305,6 +373,59 @@ export class ArabicConverter {
     return merged;
   }
 
+  /**
+   * Peels leading and trailing punctuation off each neutral run. A bidi engine
+   * only keeps punctuation in left-to-right order when it sits *between* two
+   * left-to-right characters; at the edge of a run it follows the
+   * right-to-left line instead, which is also where bracket mirroring applies.
+   * So "(نص 123)" lays out as "(123 صن)" rather than "123) صن(".
+   */
+  #splitNeutralEdges(runs) {
+    const result = [];
+
+    for (const run of runs) {
+      if (run.kind !== RUN_NEUTRAL || IS_TAG.test(run.text)) {
+        result.push(run);
+        continue;
+      }
+
+      const chars = Array.from(run.text);
+      let start = 0;
+      let end = chars.length;
+      while (start < end && !IS_STRONG_LTR.test(chars[start])) start++;
+      while (end > start && !IS_STRONG_LTR.test(chars[end - 1])) end--;
+
+      // A bracket whose partner is inside the left-to-right core belongs to
+      // it ("f(x)" stays whole); only unpaired edge brackets follow the line.
+      while (
+        end < chars.length &&
+        closesOpenBracket(chars.slice(start, end), chars[end])
+      ) {
+        end++;
+      }
+      while (start > 0 && opensClosedBracket(chars.slice(start, end), chars[start - 1])) {
+        start--;
+      }
+
+      const lead = chars.slice(0, start).join('');
+      const core = chars.slice(start, end).join('');
+      const trail = chars.slice(end).join('');
+
+      if (lead) result.push({ kind: RUN_RTL_NEUTRAL, text: lead });
+      if (core) result.push({ kind: RUN_NEUTRAL, text: core });
+      if (trail) result.push({ kind: RUN_RTL_NEUTRAL, text: trail });
+    }
+
+    return result;
+  }
+
+  /** Lays out one run in its visual left-to-right position. */
+  #renderRun(run) {
+    if (run.kind === RUN_ARABIC) return this.#reverseRun(run.text);
+    if (run.kind === RUN_RTL_NEUTRAL) return mirror(run.text);
+    return run.text;
+  }
+
   /** Shapes an Arabic run and lays its clusters out right-to-left. */
   #reverseRun(text) {
     return this.#shapeClusters(text)
@@ -316,21 +437,32 @@ export class ArabicConverter {
   /**
    * Lays each line out visually right-to-left: Arabic runs are shaped and
    * reversed, neutral runs (Latin words, digits, punctuation) keep their own
-   * internal order but move as blocks. Lines without Arabic are untouched.
+   * internal order but move as blocks, and punctuation at the edge of a run
+   * follows the right-to-left flow with brackets mirrored. Lines without
+   * Arabic are untouched.
+   *
+   * A trailing `\r` (Windows CRLF line endings) is set aside before the line
+   * is laid out and put back afterwards; otherwise, being whitespace, it would
+   * be reversed to the *start* of every line.
    */
   reverseText(text) {
     if (!text) return text;
 
     return text
       .split('\n')
-      .map((line) => {
-        const runs = this.#toRuns(line);
-        if (!runs.some((run) => run.kind === RUN_ARABIC)) return line;
+      .map((rawLine) => {
+        const cr = rawLine.endsWith('\r') ? '\r' : '';
+        const line = cr ? rawLine.slice(0, -1) : rawLine;
 
-        return runs
-          .map((run) => (run.kind === RUN_ARABIC ? this.#reverseRun(run.text) : run.text))
-          .reverse()
-          .join('');
+        const runs = this.#toRuns(line);
+        if (!runs.some((run) => run.kind === RUN_ARABIC)) return rawLine;
+
+        return (
+          runs
+            .map((run) => this.#renderRun(run))
+            .reverse()
+            .join('') + cr
+        );
       })
       .join('\n');
   }
@@ -366,3 +498,13 @@ export class ArabicConverter {
 
 const arabicConverter = new ArabicConverter();
 export default arabicConverter;
+
+/**
+ * Conversion modes, shared by the Web Worker and the synchronous fallback so
+ * a new mode cannot be added to one and forgotten in the other.
+ */
+export const PROCESSORS = {
+  text: (input) => arabicConverter.convertText(input),
+  color: (input) => arabicConverter.processColorTags(input),
+  quoted: (input) => arabicConverter.processQuotedText(input),
+};

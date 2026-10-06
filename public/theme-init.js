@@ -7,7 +7,7 @@
  * would silently break whenever this code changes.
  *
  * Keep the resolution rules here in sync with ThemeProvider.jsx and
- * I18nProvider.jsx.
+ * src/i18n/resolveLang.js (resolveLang.test.js checks the language rule).
  */
 (function () {
   try {
