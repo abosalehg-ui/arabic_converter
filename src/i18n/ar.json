@@ -58,7 +58,6 @@
 
   "progress.converting": "جارٍ التحويل...",
   "progress.processingFile": "جارٍ معالجة الملف...",
-  "output.previewHint": "المعاينة تعرض النص كما سيظهر في برنامج لا يدعم العربية.",
 
   "stats.chars": "{n} حرف",
   "stats.words": "{n} كلمة",

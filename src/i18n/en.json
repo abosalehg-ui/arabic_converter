@@ -58,7 +58,6 @@
 
   "progress.converting": "Converting...",
   "progress.processingFile": "Processing file...",
-  "output.previewHint": "The preview shows the text as a renderer without Arabic support will display it.",
 
   "stats.chars": "{n} chars",
   "stats.words": "{n} words",
