@@ -128,8 +128,6 @@ export function FileProcessor() {
         value={fileOutput}
         readOnly
         placeholder={t('file.outputPlaceholder')}
-        visualPreview
-        hint={t('output.previewHint')}
       />
     </div>
   );
